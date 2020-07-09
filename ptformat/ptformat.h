@@ -29,6 +29,13 @@
 #include <stdint.h>
 #include "ptformat/visibility.h"
 
+// https://stackoverflow.com/questions/3694723/error-c3861-strcasecmp-identifier-not-found-in-visual-studio-2008
+#ifdef _MSC_VER 
+ //not #if defined(_WIN32) || defined(_WIN64) because we have strncasecmp in mingw
+# define strncasecmp _strnicmp
+# define strcasecmp _stricmp
+#endif
+
 class LIBPTFORMAT_API PTFFormat {
 public:
 	PTFFormat();
