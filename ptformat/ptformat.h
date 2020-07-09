@@ -27,7 +27,7 @@
 #include <algorithm>
 #include <vector>
 #include <stdint.h>
-#include "ptformat/visibility.h"
+#include "visibility.h"
 
 // https://stackoverflow.com/questions/3694723/error-c3861-strcasecmp-identifier-not-found-in-visual-studio-2008
 #ifdef _MSC_VER 
