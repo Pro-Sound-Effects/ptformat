@@ -25,6 +25,8 @@
 #include <string>
 #include <string.h>
 #include <assert.h>
+#include <fstream>
+#include <sstream>
 
 #ifdef HAVE_GLIB
 # include <glib/gstdio.h>
@@ -406,6 +408,7 @@ PTFFormat::unxor(std::string const& path) {
 		xor_delta = gen_xor_delta(xor_value, 53, false);
 		break;
 	case 0x05:
+	case 0x06: // I seem to get 0x06 for PT cloud projects
 		xor_delta = gen_xor_delta(xor_value, 11, true);
 		break;
 	default:
@@ -439,6 +442,32 @@ PTFFormat::unxor(std::string const& path) {
 int
 PTFFormat::load(std::string const& ptf, int64_t targetsr) {
 	cleanup();
+
+	// check for cloud save, use last revision if so
+	if (ptf.rfind (".ptxl") != std::string::npos)
+	{
+		// args must be passed like:
+		// ./ptftool "1onItLzyb9gKyQAUYP0Xkb#.ptproject/TestCloudProject.ptxl"
+		// so that we can find the "1onItLzyb9gKyQAUYP0Xkb#.ptproject/Revision History" folder
+		std::string ptProjectExt = ".ptproject";
+		size_t ptProjectIdx = ptf.rfind (ptProjectExt);
+		if (ptProjectIdx == std::string::npos)
+			return -4;
+
+		// the .ptxl file actually contains the path to the latest revision, i.e
+		// "Revision History/Manual Saves/20200715.023322.ptpx"
+		std::ifstream latestRevisionFile (ptf);
+		if (!latestRevisionFile.good ())
+			return -4;
+		std::string latestRevision ((std::istreambuf_iterator<char> (latestRevisionFile)),
+									 std::istreambuf_iterator<char> ());
+
+		// build path to the latest revision and call load again
+		std::string projectPath = ptf.substr (0, ptProjectIdx + ptProjectExt.length ());
+		projectPath += "/" + latestRevision;
+		return load (projectPath, targetsr);
+	}
+
 	_path = ptf;
 
 	if (unxor(_path))
