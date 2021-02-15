@@ -63,18 +63,18 @@ hexdump(uint8_t *data, int length, int level)
 	for (i = 0; i < length; i += step) {
 		end = i + step;
 		if (end > length) end = length;
-		for (k = 0; k < level; k++)
-			printf("    ");
-		for (j = i; j < end; j++) {
-			printf("%02X ", data[j]);
-		}
-		for (j = i; j < end; j++) {
-			if (data[j] < 128 && data[j] > 32)
-				printf("%c", data[j]);
-			else
-				printf(".");
-		}
-		printf("\n");
+//        for (k = 0; k < level; k++)
+//            printf("    ");
+//        for (j = i; j < end; j++) {
+//            printf("%02X ", data[j]);
+//        }
+//        for (j = i; j < end; j++) {
+//            if (data[j] < 128 && data[j] > 32)
+//                printf("%c", data[j]);
+//            else
+//                printf(".");
+//        }
+//        printf("\n");
 	}
 }
 
@@ -483,7 +483,7 @@ PTFFormat::load(std::string const& ptf, int64_t targetsr) {
 
 	int err = 0;
 	if ((err = parse())) {
-		printf ("PARSE FAILED %d\n", err);
+		//printf ("PARSE FAILED %d\n", err);
 		return -4;
 	}
 
@@ -595,10 +595,10 @@ PTFFormat::dump_block(struct block_t& b, int level)
 {
 	int i;
 
-	for (i = 0; i < level; i++) {
-		printf("    ");
-	}
-	printf("%s(0x%04x)\n", get_content_description(b.content_type).c_str(), b.content_type);
+//    for (i = 0; i < level; i++) {
+//        printf("    ");
+//    }
+	//printf("%s(0x%04x)\n", get_content_description(b.content_type).c_str(), b.content_type);
 	hexdump(&_ptfunxored[b.offset], b.block_size, level);
 
 	for (vector<PTFFormat::block_t>::iterator c = b.child.begin();
